@@ -1,0 +1,39 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+int count = 0;
+int buttonPin = 2;   // Increment button
+int resetPin  = 3;   // Reset button
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Adjust address (0x27 or 0x3F depending on your module)
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);  // Use internal pull-up
+  pinMode(resetPin, INPUT_PULLUP);   // Reset button also needs pull-up
+  lcd.init();                        // Initialize LCD
+  lcd.backlight();                   // Turn on backlight
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Button Status:");
+}
+
+void loop() {
+  // Increment button
+  if (digitalRead(buttonPin) == LOW) {   // LOW means pressed with INPUT_PULLUP
+    count++;
+    lcd.setCursor(0,1);
+    lcd.print("Pressed Count: ");  
+    lcd.print(count);              
+    lcd.print("   ");              // Clear trailing digits
+    delay(300);                    // debounce delay
+  }
+
+  // Reset button
+  if (digitalRead(resetPin) == LOW) {    // LOW means pressed with INPUT_PULLUP
+    count = 0;
+    lcd.setCursor(0,1);
+    lcd.print("Pressed Count: ");  
+    lcd.print(count);              
+    lcd.print("   ");              // Clear trailing digits
+    delay(300);                    // debounce delay
+  }
+}
