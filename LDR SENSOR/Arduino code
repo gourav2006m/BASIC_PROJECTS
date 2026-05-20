@@ -1,0 +1,36 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+int ldrPin = A0;   // LDR connected to analog pin A0
+int ledPin = 2;    // LED connected to digital pin D2
+int ldrValue = 0;  
+int threshold = 600; // Adjust this after testing
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // LCD address (0x27 or 0x3F)
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Light Sensor:");
+  Serial.begin(9600);
+}
+
+void loop() {
+  ldrValue = analogRead(ldrPin);   // Read LDR value (0–1023)
+  Serial.println(ldrValue);        // Debugging
+
+  if (ldrValue > threshold) {      // Dark → Night
+    digitalWrite(ledPin, HIGH);
+    lcd.setCursor(0,1);
+    lcd.print("NIGHT           ");
+  } else {                         // Bright → Day
+    digitalWrite(ledPin, LOW);
+    lcd.setCursor(0,1);
+    lcd.print("DAY             ");
+  }
+
+  delay(300);
+}
